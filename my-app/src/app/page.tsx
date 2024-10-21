@@ -1,8 +1,29 @@
-import { MyButton } from "./components/my-button";
-import { MySquare } from "./components/my-square";
-import { MyTitulo } from "./components/my-titulo";
+// import { MyButton } from "./components/my-button";
+// import { MySquare } from "./components/my-square";
+// import { MyTitulo } from "./components/my-titulo";
 
-type AvatarProps = {
+"use client"
+
+import { getAddress } from "../../get-address"
+
+export default function Home() {
+  function handlGetAdress() {
+    getAddress("51190740")
+
+  }
+  return(
+    <>
+    <button 
+    onClick={handlGetAdress }
+    className="px-3 py-2 rounded-lg bg-primary text-[#fff]">obter endereço
+    
+    </button>
+    </>
+  )
+
+
+}
+{/* type AvatarProps = {
   size?: number;
   
 };
@@ -34,7 +55,7 @@ function Card({children}: CardProps) {
 
 }
 
-export default function Home() {
+//export default function Home() {
   return (
     <div>
       <h1>Página Home</h1>
@@ -58,4 +79,4 @@ export default function Home() {
 
     </div>
   );
-}
+} */}
