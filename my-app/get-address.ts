@@ -1,18 +1,15 @@
 export async function getAddress(cep: string) {
-    const url = `http://viacep.com.br/ws/${cep}/json/`
+  const url = `http://viacep.com.br/ws/${cep}/json/`;
 
-    try{
-
+  try {
     const response = await fetch(url);
-    
+    console.log(response);
     const json = await response.json();
 
-    return
-    console.log(json);
+    return json;
   } catch (error) {
     console.error("Ocorreu um erro inesperado", error);
- }
+  }
 }
-
 
 //getAddress("51190740");
