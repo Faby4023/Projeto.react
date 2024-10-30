@@ -10,11 +10,11 @@ import { getAddress } from "../../get-address";
 
 const nomes: string[] = ["Augusto César", "Thiago Felipe", "Douglas Henrique"];
 
-type Address = {
-  logradouro: string;
-  bairro: string;
-  cidade: string;
-};
+// type Address = {
+//   logradouro: string;
+//   bairro: string;
+//   cidade: string;
+//};
 
 export default function Home() {
   const [address, setAddress] = useState<Address | null>(null);
@@ -61,11 +61,14 @@ export default function Home() {
             : "Nenhum endereço obtido"}
         </span>
       </div>
+
+      <div className="flex flex-col gap-4 mt-6">
       <ul>
-        {nomes.map((nome) =>(
-          <li>{nome}</li>
+        {nomes.map((address) =>(
+          <li key={address.id}>{address.localidade}</li>
         ))}
       </ul>
+      </div>
     </div>
   );
 }

@@ -25,3 +25,6 @@ body {
     text-wrap: balance;
   }
 }
+@media only screen and (max-widht:600px) {
+  
+}
