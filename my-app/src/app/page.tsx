@@ -3,97 +3,90 @@ import { useState } from "react";
 import { getAddress } from "../../get-address";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { MdOutlineDelete } from "recat-icons/md";
-
+import { MdOutlineDelete } from "react-icons/md";
 
 type Address = {
   id: string;
-  logradouro: string;
   bairro: string;
-  cidade: string;
   cep: string;
-  estado: string;
   complemento: string;
-  localidade: string;
+  ddd: string;
+  localidade: string; // Cidade
+  logradouro: string;
+  uf: string;
   consultedAt: Date;
-
 };
 
 const initialAddresses: Address[] = [
   {
-
     id: self.crypto.randomUUID(),
-    logradouro: "Avenida Paulista",
-    bairro: "Bela Vista",
-    cidade: "São Paulo",
-    cep: "01311-200",
-    estado: "SP",
-    complemento: "Edifício Comercial",
-    localidade: "Zona Central",
+    bairro: "Centro",
+    cep: "01001-000",
+    complemento: "Apto 101",
+    ddd: "11",
+    localidade: "São Paulo",
+    logradouro: "Praça da Sé",
+    uf: "SP",
     consultedAt: new Date(),
   },
-  
   {
-    id:  self.crypto.randomUUID(),
-    logradouro: "Rua XV de Novembro",
-    bairro: "Centro",
-    cidade: "Curitiba",
-    cep: "80020-310",
-    estado: "PR",
-    complemento: "Próximo à Praça Osório",
-    localidade: "Centro Histórico",
-    consultedAt: new Date()
+    id: self.crypto.randomUUID(),
+    bairro: "Copacabana",
+    cep: "22041-001",
+    complemento: "Bloco B, Ap 502",
+    ddd: "21",
+    localidade: "Rio de Janeiro",
+    logradouro: "Avenida Atlântica",
+    uf: "RJ",
+    consultedAt: new Date(),
   },
   {
-    id:  self.crypto.randomUUID(),
-    logradouro: "Avenida Rio Branco",
-    bairro: "Centro",
-    cidade: "Rio de Janeiro",
-    cep: "20090-003",
-    estado: "RJ",
-    complemento: "Próximo ao Museu do Amanhã",
-    localidade: "Zona Central",
-    consultedAt: new Date()
+    id: self.crypto.randomUUID(),
+    bairro: "Savassi",
+    cep: "30140-071",
+    complemento: "Loja 3",
+    ddd: "31",
+    localidade: "Belo Horizonte",
+    logradouro: "Rua Pernambuco",
+    uf: "MG",
+    consultedAt: new Date(),
   },
   {
-    id:  self.crypto.randomUUID(),
-    logradouro: "Avenida Afonso Pena",
-    bairro: "Centro",
-    cidade: "Belo Horizonte",
-    cep: "30130-003",
-    estado: "MG",
-    complemento: "Próximo ao Parque Municipal",
-    localidade: "Região Central",
-    consultedAt: new Date()
+    id: self.crypto.randomUUID(),
+    bairro: "Meireles",
+    cep: "60160-230",
+    complemento: "Casa 10",
+    ddd: "85",
+    localidade: "Fortaleza",
+    logradouro: "Rua Silva Jatahy",
+    uf: "CE",
+    consultedAt: new Date(),
   },
 ];
 
 function formatDate(date: Date) {
-  const result = formatDistanceToNow(new Date(date),{
+  const result = formatDistanceToNow(new Date(date), {
     includeSeconds: true,
     locale: ptBR,
   });
 
   return result;
 }
-  
-  export default function Home() {
-  const [address, setAddress] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [addresses, setAddress] = useState<Address[]>(initialAddresses);
 
-  const[textValue, setTextValue] = useState("");
+export default function Home() {
   
+  const [loading, setLoading] = useState(false);
+  const [addresses, setAddresses] = useState<Address[]>(initialAddresses);
+
+  const [textValue, setTextValue] = useState("");
 
   async function handleGetAddress() {
     setLoading(true);
 
     try {
       const result = await getAddress(textValue);
-
-      setAddress(result); // Armazena o objeto inteiro no estado
       console.log(result);
-      if (result?.erro === "true"){
+      if (result?.erro === "true") {
         alert("CEP inválido.");
         return;
       }
@@ -103,12 +96,11 @@ function formatDate(date: Date) {
         consultedAt: new Date(),
         ...result,
       };
-
       console.log(newAddress);
 
-      const newAddresses = [newAddress, ...address];
-      newAddresses(newAddresses);
-      
+      // Adiciona o novo endereço na primeira posição do array
+      const newAddresses = [newAddress, ...addresses];
+      setAddresses(newAddresses);
     } catch (error) {
       console.log(error);
       alert("Ocorreu um erro ao obter o endereço.");
@@ -117,72 +109,69 @@ function formatDate(date: Date) {
     }
   }
 
-   return (
+  function handleDeleteAddress(id: string) {
+    const filteredAddresses = addresses.filter((address) => address.id !== id);
+
+    setAddresses(filteredAddresses);
+  }
+
+  return (
     <div className="flex flex-col items-center">
       <h1>Página Home</h1>
 
       <div className="flex flex-col gap-2">
         <label>CEP</label>
-        <input 
-
-          onChange={(e)=> setTextValue(e.target.value)}
+        <input
+          onChange={(e) => setTextValue(e.target.value)}
           className="rounded-lg shadow-lg px-4 p-3"
-          placeholder="Digite um CEP válido" 
+          placeholder="Digite um CEP válido"
         />
 
         <button
           onClick={handleGetAddress}
-          disabled={textValue ===""}
+          disabled={textValue === ""}
           className={`${
             loading && "opacity-30"
           } w-fit px-5 py-3 bg-blue-700 text-white rounded-xl`}
         >
-
           {loading ? "Carregando..." : "Obter endereço"}
         </button>
-        </div>    
-        
-
-        <table className="table-auto [&>*>*>*]:border-2">
-          <thead>
-            <tr className="&>*]:px-4 [&>*]:py-2">
-              <th>Logradouro</th>
-              <th>Bairro</th>
-              <th>Localidade</th>
-              <th>CEP</th>
-              <th>Consultado em</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {addresses.map((address) =>(
-              <tr key={address.id} className="&>*]:px-4 [&>*]:py-2">
-                <td>{address.logradouro}</td>
-                <td>{address.bairro}</td>
-                <td>{address.localidade}</td>
-                <td>{address.cep}</td>
-                <td>{formatDate(address.consulteAdt)}</td>
-                <td>
-                  <button 
-                  onClick={() => handleGetAddress(address.id)}
-                  className="bg-red-300 p-0.5 flex items-center"
-                  >
-                    <MdOutlineDelete size={24} />
-
-                  </button>
-
-                </td>
-
-              </tr>
-            ))}
-      
-          </tbody>
-        </table>
       </div>
 
-          );
-  }
+      <table className="table-auto [&>*>*>*]:border-2">
+        <thead>
+          <tr className="[&>*]:px-4 [&>*]:py-2">
+            <th>Logradouro</th>
+            <th>Bairro</th>
+            <th>Localidade</th>
+            <th>UF</th>
+            <th>CEP</th>
+            <th>Consultado em</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
 
-
-
+        <tbody>
+          {addresses.map((address) => (
+            <tr key={address.id} className="[&>*]:px-4 [&>*]:py-2">
+              <td>{address.logradouro}</td>
+              <td>{address.bairro}</td>
+              <td>{address.localidade}</td>
+              <td>{address.uf}</td>
+              <td>{address.cep}</td>
+              <td>{formatDate(address.consultedAt)}</td>
+              <td>
+                <button
+                  onClick={() => handleDeleteAddress(address.id)}
+                  className="bg-red-300 p-0.5 flex items-center"
+                >
+                  <MdOutlineDelete size={24} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
